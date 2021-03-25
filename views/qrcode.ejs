@@ -1,0 +1,67 @@
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <!-- Bootstrap CSS -->
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/b51a349715.js" crossorigin="anonymous"></script>
+    <title>Qrcode</title>
+</head>
+
+<body>
+    <h1 style="text-align: center; margin-top: 50px;"> QRCode Generator</h1>
+    <div class="nav justify-content-center">
+        <div class="card border-primary mb-3" style="width: 18rem;margin-top: 20px;">
+            <div class="card-header">User information</div>
+            <div class="card-body text-primary">
+                <form action="/" method="post" enctype="multipart/form-data">
+                    <input type="text" name="data" placeholder="Enter Text" class="form-control"><br>
+                    <!-- <div class="text-center"><span>or</span></div><br> -->
+                    <!-- <input type="file" name="file" placeholder="Upload a file" class="form-control"><br> -->
+                    <label for="color1">Pick color </label>
+                    <input type="color" name="color1" value="#000000"><br><br>
+                    <div class="text-center"> <input type="submit" value="Qrcode" class="btn btn-primary"> </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <%if(data){%>
+    <div class="text-center">
+        <h5>Scan your QRCode</h5>
+        <img src="<%=data%>" alt="" id="qrcode" style="width:200px; height:200px;"><br><br>
+        <div class="text-center">
+            <button type="button" onclick="zoomin()"><i class="fas fa-search-plus"></i></button>&nbsp;&nbsp;
+            <button type="button" onclick="zoomout()"><i class="fas fa-search-minus"></i></button>
+        </div>
+    </div>
+    <%}%>
+    </body>
+    </html>
+    <script>
+        function zoomin(){
+            var myImg = document.getElementById("qrcode");
+            var currWidth = myImg.clientWidth;
+            var currHeight=myImg.clientHeight;
+            if(currWidth == 400 && currHeight==400){
+                alert("Maximum zoom-in level reached.");
+            } else{
+                myImg.style.width = (currWidth + 50) + "px";
+                myImg.style.height = (currHeight + 50) + "px";
+            } 
+        }
+        function zoomout(){
+            var myImg = document.getElementById("qrcode");
+            var currWidth = myImg.clientWidth;
+            var currHeight=myImg.clientHeight;
+            if(currWidth == 200 && currHeight==200){
+                alert("Maximum zoom-out level reached.");
+            } else{
+                myImg.style.width = (currWidth - 50) + "px";
+                myImg.style.height=(currHeight-50)+"px";
+            }
+        }
+    </script>
