@@ -10,25 +10,31 @@ app.set('view engine', 'ejs')
 
 var data = ""
 
-async function create(dataForQRcode, center_image, width, cwidth, color) {
-    const canvas = createCanvas(width, width);
-    qrcode.toCanvas(
-        canvas,
-        dataForQRcode, {
-            errorCorrectionLevel: "H",
-            margin: 1,
-            color: {
-                dark: color,
-                light: "#ffffff",
-            },
-        }
-    );
+async function create(dataForQRcode, center_image, width, color) {
+    try {
+        const canvas = createCanvas(width, width);
+        qrcode.toCanvas(
+            canvas,
+            dataForQRcode, {
+                errorCorrectionLevel: "H",
+                margin: 1,
+                color: {
+                    dark: color,
+                    light: "#ffffff",
+                },
+            }
+        );
 
-    const ctx = canvas.getContext("2d");
-    const img = await loadImage(center_image);
-    const center = (canvas.width / 2) - (cwidth / 2);
-    ctx.drawImage(img, center, center, cwidth, cwidth);
-    return canvas.toDataURL("image/png");
+        const ctx = canvas.getContext("2d");
+        const img = await loadImage(center_image);
+        const cwidth = 0.2 * canvas.width
+        const center = (canvas.width / 2) - (cwidth / 2);
+        ctx.drawImage(img, center, center, cwidth, cwidth);
+        // console.log(canvas.width);
+        return canvas.toDataURL("image/png");
+    } catch (err) {
+        console.log(err);
+    }
 }
 app.get("/", (req, res) => {
     if (!data) res.render("qrcode", { data: '' })
@@ -39,13 +45,18 @@ app.get("/", (req, res) => {
 app.post("/", (req, res) => {
     const form = new formidable.IncomingForm()
     form.parse(req, async (err, fields, files) => {
-        if (err) {
-            console.log(err);
-        } else {
+        try {
+            if (err) {
+                res.send("Parsing error")
+            }
+            var path = files.logo.path
+            // console.log(path);
             var text = fields.data
             var dark = fields.color1
-            data = await create(text, __dirname + "/public/images/logo.jpg", 150, 50, dark)
+            data = await create(text, path, 200, dark)
             res.redirect('/')
+        } catch (err) {
+            res.send(err)
         }
     })
 })

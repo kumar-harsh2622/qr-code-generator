@@ -20,8 +20,12 @@
             <div class="card-body text-primary">
                 <form action="/" method="post" enctype="multipart/form-data">
                     <input type="text" name="data" placeholder="Enter Text" class="form-control"><br>
-                    <!-- <div class="text-center"><span>or</span></div><br> -->
-                    <!-- <input type="file" name="file" placeholder="Upload a file" class="form-control"><br> -->
+                    <div class="custom-file">
+                        <label class="custom-file-label" for="logo">Choose your Logo</label><br>
+                        <input type="file" class="custom-file-input" id="logo" name="logo" required style="width: 250px;"><br><br>
+                    </div>
+                    <!-- <label for="logo">Choose your Logo</label>
+                    <input type="file" id="logo" style="width: 250px;"><br><br> -->
                     <label for="color1">Pick color </label>
                     <input type="color" name="color1" value="#000000"><br><br>
                     <div class="text-center"> <input type="submit" value="Qrcode" class="btn btn-primary"> </div>
