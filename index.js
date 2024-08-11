@@ -26,40 +26,60 @@ async function create(dataForQRcode, center_image, width, color) {
         );
 
         const ctx = canvas.getContext("2d");
-        const img = await loadImage(center_image);
-        const cwidth = 0.2 * canvas.width
-        const center = (canvas.width / 2) - (cwidth / 2);
-        ctx.drawImage(img, center, center, cwidth, cwidth);
-        // console.log(canvas.width);
+        if (center_image) {
+            const img = await loadImage(center_image);
+            const cwidth = 0.2 * canvas.width
+            const center = (canvas.width / 2) - (cwidth / 2);
+            ctx.drawImage(img, center, center, cwidth, cwidth);
+        }
+        
         return canvas.toDataURL("image/png");
     } catch (err) {
         console.log(err);
     }
 }
+
 app.get("/", (req, res) => {
-    if (!data) res.render("qrcode", { data: '' })
+    if (!data) {
+        res.render("qrcode", { data: '' })
+    }
     else {
         res.render("qrcode", { data: data })
+        data = ""
     }
 })
+
 app.post("/", (req, res) => {
-    const form = new formidable.IncomingForm()
+    const form = new formidable.IncomingForm({
+        allowEmptyFiles : true,
+        keepExtensions : true,
+        minFileSize : 0
+    })
+
     form.parse(req, async (err, fields, files) => {
         try {
             if (err) {
-                res.send("Parsing error")
+                return res.status(400).send("Parsing error");
             }
-            var path = files.logo.path
-            // console.log(path);
-            var text = fields.data
-            var dark = fields.color1
-            data = await create(text, path, 200, dark)
-            res.redirect('/')
+    
+            let path = "";
+            if (files && files.logo && files.logo.length > 0 && files.logo.at(0).originalFilename) {
+                path = files.logo[0].filepath;
+            }
+    
+            const text = fields.data ? fields.data[0] : "";  
+            const dark = fields.color1 ? fields.color1[0] : "#000000"; 
+    
+            data = await create(text, path, 200, dark);
+    
+            return res.redirect('/');
         } catch (err) {
-            res.send(err)
+            return res.status(500).send("Internal Server Error");
         }
-    })
+    });
+    
 })
+
 app.listen(process.env.PORT || 3000, () => {
     console.log('Server running at 3000');
 })
